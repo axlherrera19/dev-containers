@@ -1,0 +1,81 @@
+services:
+  
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    volumes:
+      # Forwards the local Docker socket to the container.
+      - /var/run/docker.sock:/var/run/docker-host.sock 
+
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ..:/workspace:cached
+
+      # Persist Dapr runtime & components across rebuilds
+      # - ../.docker_data/dapr:/home/vscode/.dapr:cached
+
+      - ./lifecycle:/opt/devcontainer/init
+    ports:
+      - '8181:8181'
+    command: 
+      - /bin/bash
+      - -c
+      - |
+          whoami
+          mkdir -pv /opt/devcontainer/init || true
+          ls -la /opt/devcontainer/
+          ls -la /opt/devcontainer/init/
+          sudo chmod -v +x /opt/devcontainer/init/*
+          ls -la /opt/devcontainer/init/
+          sleep infinity
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  mongodb:
+    image: mongo:8-noble
+    ports:
+      - '27017:27017'
+    environment:
+    - MONGO_INITDB_DATABASE=my-database
+    - MONGO_INITDB_ROOT_USERNAME=admin
+    - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+    - ../.docker_data/mongodb:/data
+    - ./mongodb/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    environment:
+      - TERM=linux
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-polystat-panel
+    ports:
+     - '3000:3000'
+    networks:
+      - backend
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - backend 
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  backend:
+    driver: bridge

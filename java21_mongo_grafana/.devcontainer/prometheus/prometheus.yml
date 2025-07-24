@@ -1,0 +1,9 @@
+# prometheus/prometheus.yml
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'springboot-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8181', '172.17.0.1:8181', '0.0.0.0:8181', 'minerva-api:8181', 'minerva-api-dev-ahbc.wpd.mev.atos.net:443', 'minerva-api-dev-ahbc.wpd.mev.atos.net']
