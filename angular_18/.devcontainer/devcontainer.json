@@ -1,0 +1,77 @@
+{
+  "name": "Form Editor UI dev container",
+  "dockerComposeFile": "docker-compose.yaml",
+  // The 'service' property is the name of the service for the container that VS Code should
+  // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+  "service": "app",
+
+  // The 'workspaceFolder' property is the path VS Code should open by default when
+  // connected. Corresponds to a volume mount in .devcontainer/docker-compose.yml
+  "mounts": [
+    "source=${localWorkspaceFolder}/.devcontainer/lifecycle,target=/opt/devcontainer/init,type=bind",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/root/.ssh,readonly,type=bind",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/jpawlowski/devcontainer-features/cascadia-code:1": {
+      "installFontconfig": true,
+      "installStaticTTF": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "os-provided"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Configura el formatter por defecto para TypeScript/JavaScript
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        // Save on format
+        "editor.formatOnSave": true,
+        "git.mergeEditor": true,
+        "editor.wordWrapColumn": 160,
+        "editor.wordWrap": "wordWrapColumn"
+      },
+      "extensions": [
+        "angular.ng-template",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "johnpapa.angular-essentials",
+        "nrwl.angular-console",
+        "jianglinghao.vscode-npm-scripts",
+        "ms-azuretools.vscode-docker",
+        "docker.docker",
+        "donjayamanne.githistory",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "guodongsun.vscode-git-cruise",
+        "mhutchie.git-graph",
+        "waderyan.gitblame"
+      ]
+    }
+  },
+  "forwardPorts": [4200],
+  "postStartCommand": "/opt/devcontainer/init/postStartCommand.sh",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node"
+}
