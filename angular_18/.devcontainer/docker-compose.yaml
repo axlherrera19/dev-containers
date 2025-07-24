@@ -18,8 +18,8 @@ services:
       # - /home/devcontainer/m2:/opt/devcontainer/m2
       - /home/devcontainer/npm:/home/vscode/npm
     networks:
-      - my-shared-form-engine-network
-    container_name: form-editor-ui-container
+      - frontend-network
+    container_name: frontend-angular18-container
     command:
       - /bin/bash
       - -c
@@ -36,60 +36,5 @@ services:
         mkdir -pv /home/vscode/npm || true
         sudo chmod -v +x /home/vscode/npm/*
         sleep infinity
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-  mongodb:
-    image: mongo:8-noble
-    ports:
-      - '27017:27017'
-    environment:
-      - MONGO_INITDB_DATABASE=form-database
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=pass
-    volumes:
-      - ../.docker_data/mongodb:/data
-      - ./mongodb/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
-    networks:
-      - my-shared-form-engine-network
-
-  form-engine:
-    image: 'ghcr.io/es-mev-applications/form-engine-framework/form-engine-api:3.8.0-RC-001'
-    links:
-      - 'mongodb'
-    environment:
-      # - 'SPRING_DATA_MONGODB_URI=mongodb://mongodb-form:27017/form-database-1?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000'
-      - 'SPRING_DATA_MONGODB_DATABASE=form-database'
-      - 'SPRING_DATA_MONGODB_USERNAME=form-database-app'
-      - 'SPRING_DATA_MONGODB_PASSWORD=form-database-pass'
-      - 'SPRING_DATA_MONGODB_HOST=mongodb'
-      - 'SPRING_DATA_MONGODB_PORT=27017'
-      - 'SPRING_DATA_REDIS_HOST=redis-form'
-      - 'SPRING_DATA_REDIS_PORT=6379'
-      - 'SPRING_DOCKER_COMPOSE_ENABLED=false'
-      - 'SPRING_PROFILES_ACTIVE=[""]'
-      - 'APPLICATION_MONGO_AUTHENTICATION_ENABLED=true'
-      # Turn on REDIS and Form Structures in Redis repository
-      # - 'SPRING_PROFILES_ACTIVE=["redis", "redis-form-structure-repository"]'
-      - 'LOGGING_LEVEL_NET.ATOS.MEV.SA.FORM.COMMON=INFO'
-      - 'LOGGING_LEVEL_NET.ATOS.MEV.SA.FORM.COMMON.UTILS=OFF'
-    # Turn on REDIS and Form Structures in Redis repository
-    # - 'APPLICATION_REDIS_BACKUPSTORAGE_USE=true'
-    # - 'APPLICATION_REDIS_CACHE_USE=true'
-    # - 'APPLICATION_REDIS_CACHE_TTLMINUTES=5'
-    # - 'APPLICATION_REDIS_CACHE_TTLSECONDS=60'
-    # - 'APPLICATION_REDIS_EVENTSYSTEM_USE=true'
-    ##AHB: Turn the following variables to false to disable database preloads. They are enabled by default.
-    # - 'APPLICATION_DATABASE_PRELOAD_LANGUAGE=false'
-    # - 'APPLICATION_DATABASE_PRELOAD_ELEMENT-TYPES=false'
-    # - 'APPLICATION_DATABASE_PRELOAD_TEST-FORMS=false'
-    # - 'APPLICATION_DATABASE_PRELOAD_BASIC-ELEMENTS=false'
-    ports:
-      - '8888:8888'
-    depends_on:
-      - mongodb
-    networks:
-      - my-shared-form-engine-network
-
 networks:
-  my-shared-form-engine-network:
-    external: true
+  frontend-network:

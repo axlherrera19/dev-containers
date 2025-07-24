@@ -5,7 +5,7 @@
 
 echo "Container has started. Running post-start tasks..."
 
-npm install
+# npm install
 
 echo -e '\n'
 echo -e '\n'

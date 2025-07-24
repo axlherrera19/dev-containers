@@ -19,9 +19,8 @@ services:
       # - /home/devcontainer/m2:/opt/devcontainer/m2
       - /home/devcontainer/m2:/home/vscode/.m2
     networks:
-      - my-shared-form-engine-network
-      - api-network
-    container_name: form-engine-api-container
+      - backend-network
+    container_name: backend-java17-container
     command: 
       - /bin/bash
       - -c
@@ -46,9 +45,9 @@ services:
     ports:
       - '27017:27017'
     networks:
-      - api-network
+      - backend-network
     environment:
-    - MONGO_INITDB_DATABASE=form-database
+    - MONGO_INITDB_DATABASE=my-database
     - MONGO_INITDB_ROOT_USERNAME=admin
     - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
@@ -56,6 +55,4 @@ services:
     - ./mongodb/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
 
 networks:
-  my-shared-form-engine-network:
-    external: true
-  api-network:
+  backend-network:

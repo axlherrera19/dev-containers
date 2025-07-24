@@ -1,12 +1,12 @@
-db = db.getSiblingDB('form-database');
-console.log('Creating database form-database');
+db = db.getSiblingDB('my-database');
+console.log('Creating database my-database');
 db.createUser({
-  user: 'form-database-app',
-  pwd: 'form-database-pass',
+  user: 'user',
+  pwd: 'password',
   roles: [
     {
       role: 'readWrite',
-      db: 'form-database'
+      db: 'my-database'
     }
   ]
 });
